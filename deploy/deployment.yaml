@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service-api-deployment
+  labels:
+    app: customer-service-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service-api
+  template:
+    metadata:
+      labels:
+        app: customer-service-api
+    spec:
+      containers:
+        - name: nodeserver
+          image: byamada/customer-service-api:latest
+          ports:
+            - containerPort: 8082
+          env:
+            # Define the environment variable
+            - name: SLACK_URL # Notice that the case is different here
+              # from the key name in the ConfigMap.
+              valueFrom:
+                configMapKeyRef:
+                  name: customer-service-api-configmap           # The ConfigMap this value comes from.
+                  key: slack_url # The key to fetch.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service-api-service
+spec:
+  selector:
+    app: customer-service-api
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+      #nodePort: 31110

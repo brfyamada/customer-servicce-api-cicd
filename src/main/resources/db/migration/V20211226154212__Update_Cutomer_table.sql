@@ -1,0 +1,1 @@
+ALTER TABLE customer ADD COLUMN des_user_operation varchar(50);

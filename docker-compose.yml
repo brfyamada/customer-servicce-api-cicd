@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  postgres-compose:
+    image: postgres:10.3-alpine
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "customer"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./docker-init-db-scripts:/docker-entrypont-initdb.d"
+      - "./postgres-data:/var/lib/postgresql/data"
+    networks:
+      - postgres-compose-network
+
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "postgres@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "postgres"
+    ports:
+      - "15432:80"
+    depends_on:
+      - postgres-compose
+    networks:
+      - postgres-compose-network
+
+  # [MAPEAMENTO] Adding Prometheus container
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - "./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  # [MAPEAMENTO] Adding Grafana container
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+
+  # [JENKINS] [STEP 1] Adding Jekins container
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - '8080:8080'
+      - '50000:50000'
+    volumes:
+      - C:/Users/yamad/jenkins_compose/jenkins_configuration:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - minikube
+
+  # [JENKINS] [STEP 2] Adding Jenkins Agent container
+  agent:
+    image: jenkins/ssh-agent:jdk11
+    privileged: true
+    user: root
+    container_name: agent
+    expose:
+      - 22
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY="Inserir sua ssh publica aqui"
+networks:
+  postgres-compose-network:
+    driver: bridge
+  minikube:
+    external:
+      name: minikube
+

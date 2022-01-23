@@ -1,0 +1,369 @@
+TAGS:
+
+** Procure pelas tags para aprender a aplicar as ferramentas.
+
+[FLYWAY] utilização de versionamento de scripts banco
+[SLACK] envio de alertas e mensagens para o slack
+[METRICS] metricas com prometheus e grafana
+[MAPEAMENTO] mepeamento de objetos com MapStruct
+[JENKINS] Configurando Jenkins
+
+
+Configurations :
+
+
+[MINIKUBE] [kubernetes]:
+this step is recommended for Linux
+
+install minikube following the step in the page:
+https://minikube.sigs.k8s.io/docs/start/
+
+Main commands:
+minikube start
+get minikube ip:
+minikube ip
+minikube stop
+minikube delete
+
+***
+
+To configure access from jenkins to cluster in minikube it's
+necessary to configure the ssh keys, Open file config:
+
+home/{your_user}/.kube/config
+
+***
+
+- Convert the path of 3 keys to base64, adding - data to paramters (in Window use gitbash or similar for linux commnads):
+
+    certificate-authority to certificate-authority-data:
+    window:
+        cat c/users/{your_user}/.minikube/ca.crt | base64 -w 0; echo
+
+    linux:
+        cat /home/{your_user}/.minikube/ca.crt | base64 -w 0; echo
+
+    client-certificate to client-certificate-data:
+    windows:
+        cat c/users/{your_user}/.minikube/profiles/minikube/client.crt | base64 -w 0; echo
+
+    linux:
+        cat /home/{your_user}/.minikube/profiles/minikube/client.crt | base64 -w 0; echo
+
+    client-key to client-key-data:
+    window:
+        cat c/users/{your_user}/.minikube/profiles/minikube/client.key | base64 -w 0; echo
+
+    linux:
+        cat /home/{your_user}/.minikube/profiles/minikube/client.key | base64 -w 0; echo
+
+
+***
+
+[DOCKER] [kubernetes]:
+
+This step is recommended for windows
+It's necessary to activate Kubernets in docker:
+
+    - Access Docker Desktop and go to Settings > kubernetes:
+
+        (V) Enable Kubernetes
+        (V) Show systems containers
+
+    - Checking if the docker-container is configured as default
+
+        Go to C:\Users\{your-user}\.kube\ or /home/{your-user}/.kube/
+        Open config file
+        check if current-context: is iquals to docker-desktop, if is not change de value to.
+        example: current-context: docker-desktop
+
+***
+
+[JENKINS] [KUBERNETS] [DOCKERHUB] [CI / CD]  [OPÇÃO 1]:
+
+    First of all run docker-compose up -d (docker must be up)
+
+- Configure the agent for jenkins:
+
+	Generate a ssh key:
+
+		Run the command: ssh-keygen -t rsa -f jenkins_agent
+		It's Will create 2 files jenkins_agent and jenkins-agent.pub
+
+	Create Credentials for the agent:
+
+		Manage Jenkins > Manage Credentials > Global credentials > Add Credentials
+
+		Select SSH Username with private key.
+
+		Limit the scope to System. This means the key can’t be used for jobs.
+
+		Give the credential an ID.
+
+		Provide a description.
+
+		Enter jenkins for a username. Don’t use the username used to create the key.
+
+		Under Private Key,  check Enter directly.
+
+		Paste the contents of jenkins_agent file in the text box.
+
+		Click ok.
+
+	Create end configure an Agent:
+
+		On docker-compose paste the value of jenkins-agent.pub in the env variable JENKINS_AGENT_SSH_PUBKEY.
+
+		Run docker-compose down
+
+		Then run docker-compose up -d
+
+		On jenkins, Manage Jenkins > Manage Nodes > New Node
+
+		Define Name : jenkins
+
+		Number of executors: 1
+
+		Remote root directory: /home/jenkins/agent
+
+		Select "Use this node as much as possible"
+
+		Launch method, select Launch agents via SSH
+
+		For Host, enter agent.
+
+		Click the dropdown under Credentials and select the one you just defined.
+
+		Click Save.
+
+		Then click on Log in the menu on the left of created Agent.
+
+		The most important entry you’ll see is Agent successfully connected and online.
+
+
+- Install kubernetes plugin:
+
+	Manage Jenkins > Manage Plugins > Available
+
+	Search for Kubernetes and install
+
+	Wait restart Jenkins.
+
+- Create a credential:
+
+	Manage Jenkins > Manage Credentials > Global Credential > Add Credentials
+
+	Kind: Secret file
+
+	select the .kube/config file as secret
+
+	Id: set an id for the secret
+
+	Description: set a description
+
+	Click ok
+
+
+- Configure Cloud:
+
+	Manage Jenkins > Manage Nodes > configure clouds
+
+	Select Kubernetes
+
+	Kubernetes Cloud details
+
+	Credentials: select the credentials created above.
+
+	Test Connection
+
+	Must be success.
+
+
+[JENKINS] [KUBERNETS] [DOCKERHUB] [CI / CD]  [OPÇÃO 2]
+
+- First of all run docker-compose up -d (docker must be up)
+
+- Install docker inside Jenkins
+
+    Run command:  "docker ps"  to see what's the jenkins container id
+
+    Run the command: "docker exec -it --user root <container id> bash" to get into the container bash
+
+    So run the command: "curl https://get.docker.com/ > dockerinstall && chmod 777 dockerinstall && ./dockerinstall"
+    to download and install docker insise jenkins
+
+    Run the command: sudo chmod 666 /var/run/docker.sock to change permissions
+
+    Now docker was installed insise Jenkins
+
+- Install docker plugin:
+
+	Manage Jenkins > Manage Plugins > Available > search for Docker > select Docker Pipeline
+
+- Install Kubernetes:
+
+	Manage Jenkins > Manage Plugins > Available > search for Kubernetes > select Kubernetes Continuous Deploy Plugin
+
+	* OBS: Necessary to downgrade to version 1.0.0 link to download: https://updates.jenkins.io/download/plugins/kubernetes-cd/1.0.0/kubernetes-cd.hpi
+
+- Create a Dockerhub Credential:
+
+    Manage Jenkins > Manage Credentials > Global credentials > Add Credentials
+
+    set user and password of your docker hub repository
+
+- Create a Kubernets Credentials
+
+    Kind: Kubernertes configuration (only available if Kubernetes Continuous Deploy Plugin is installed)
+
+    Set ID (will used in Jenkinsfile)
+        example: kubernetes
+
+    Kubeconfig:
+        Enter directly
+
+    Paste in the text field the value of /.kube/config value
+
+    Click OK
+
+ -Install Gradle to Jenkins
+
+    Manage Jenkins > Global Tool Configuration > Gradle
+    Set a Grade name (This name will be used in jenkinsfile as tools)
+    Check automatic installation
+    Select the version od gradle (I've used version 7.3.3)
+
+
+- Create a Dockerfile inside project root directory:
+
+
+    FROM adoptopenjdk/openjdk11:alpine-slim
+    EXPOSE 8080
+    RUN mkdir /app
+    WORKDIR /app
+    RUN pwd
+    RUN ls
+    COPY build/libs/*.jar /app/spring-boot-application.jar
+    ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]
+
+- Create JenkinsFile:
+
+pipeline {
+
+
+    environment {
+        dockerImageName = "byamada/customer-service-api"
+        dockerImage = ""
+    }
+
+    agent any
+
+    //options { skipDefaultCheckout() }
+    tools {
+            gradle "gradle-7-3-3"
+    }
+
+    stages {
+
+        stage ('Build gradle') {
+            steps {
+                sh "gradle clean build -x test"
+            }
+        }
+
+
+        stage ('Docker Build') {
+            steps {
+                script {
+                    dockerImage = docker.build dockerImageName + ":$BUILD_NUMBER"
+                }
+            }
+        }
+
+        stage ('Pushing Image') {
+            environment {
+                registryCredentials = 'dockerhubcredential'
+            }
+             steps {
+                 script {
+                     docker.withRegistry('https://registry.hub.docker.com', registryCredentials) {
+                        dockerImage.push('latest')
+                     }
+                 }
+             }
+        }
+
+        stage ('Deploying to Kubernetes') {
+             steps {
+                 script {
+                    kubernetesDeploy(configs: "deploy/deployment.yaml", kubeconfigId: "kubernetes")
+                 }
+             }
+        }
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $dockerImageName:$BUILD_NUMBER"
+            }
+        }
+    }
+}
+
+- Create a deployment.yml config:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service-api-deployment
+  labels:
+    app: customer-service-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service-api
+  template:
+    metadata:
+      labels:
+        app: customer-service-api
+    spec:
+      containers:
+        - name: nodeserver
+          image: byamada/study-repo/customer-service-api:latest
+          ports:
+            - containerPort: 8081
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service-api-service
+spec:
+  selector:
+    app: customer-service-api
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 8081
+      nodePort: 31110
+
+
+***
+
+- Create a configMap for env variables (It's need to be executed before run project)
+with command: kubectl create -f configMap.yaml (put your variables name and values)
+
+    My example:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: customer-service-api-configmap
+  namespace: default
+data:
+  slack_webhooks_url: PasteSlackWebhooksUrlHere
+
+
+***
+

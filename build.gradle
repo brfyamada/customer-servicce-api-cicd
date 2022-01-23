@@ -1,0 +1,51 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'br.com.byamada'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation group: 'com.h2database', name: 'h2'
+
+	//[FLYWAY] [step 1] adicionar a lib flyway
+	implementation 'org.flywaydb:flyway-core'
+
+	//[METRICS] [step 1] adicionar a lib para prometheus
+	implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.8.1'
+
+	//[MAPEAMENTO] [step 1] adicionar as libs MapStruct
+	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+	//[SLACK] [step 1] incluir lib jslack, httpclient e httpmime
+	implementation group: 'com.github.seratch', name: 'jslack', version: '3.4.2'
+	implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+	implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
+}
+
+test {
+	useJUnitPlatform()
+}
