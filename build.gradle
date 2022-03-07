@@ -1,5 +1,4 @@
-//[KAFKA - AVRO] [step 4] imclude import GenerateAvroJavaTask to config avro generation
-import com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask
+//import com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask
 
 buildscript {
 	repositories {
@@ -34,6 +33,7 @@ configurations {
 }
 
 repositories {
+	jcenter()
 	mavenCentral()
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
@@ -68,7 +68,7 @@ dependencies {
 	implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.13'
 
 	//[KAFKA - AVRO] [step 3] adding kafka libs and avro]
-	implementation 'org.springframework.kafka:spring-kafka:2.0.2.RELEASE'
+	implementation 'org.springframework.kafka:spring-kafka'
 	implementation("io.confluent:kafka-schema-registry:4.1.0") {
 		exclude group: 'org.slf4j'
 	}
@@ -83,16 +83,28 @@ dependencies {
 
 }
 
-//[KAFKA - AVRO] [step 5] gradle-avro-plugin setting
+//[KAFKA - AVRO] [step 4] gradle-avro-plugin setting and method to generete avro from gradew
 avro {
 	createSetters = false
 	fieldVisibility = "PRIVATE"
 }
+
+generateAvroJava {
+	//point plugin to folder with avro schemas
+	source("src/main/resources/avro")
+	//point plugin to folder with generated POJOs
+	outputDir = file("src/main/java")
+}
+
+/* Using cleaner model for the generation method above
+
 task ("generateProtocol", type: GenerateAvroJavaTask) {
 	enabled = true
 	source file("src/main/resources/avro")
 	outputDir = file("src/main/java/")
 }
+*/
+
 
 test {
 	useJUnitPlatform()

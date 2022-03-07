@@ -72,7 +72,7 @@ services:
       - JENKINS_AGENT_SSH_PUBKEY="Inserir sua ssh publica aqui"
 
 
-  # [KAFKA] [STEP 2] Adding Zookeeper. schema-registry and Brokers
+  # [KAFKA - AVRO] [STEP 0] Adding Zookeeper. schema-registry and Brokers
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     hostname: zookeeper
@@ -248,7 +248,7 @@ services:
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 
-  # [KAFKA] [STEP 2] End of configs
+  # [KAFKA - AVRO] [STEP 0] End of configs
 
 networks:
   postgres-compose-network:

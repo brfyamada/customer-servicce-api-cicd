@@ -7,10 +7,9 @@ TAGS:
 [METRICS] metricas com prometheus e grafana
 [MAPEAMENTO] mepeamento de objetos com MapStruct
 [JENKINS] Configurando Jenkins
-
+[KAFKA - AVRO] utilizando kafka com avro
 
 Configurations :
-
 
 [MINIKUBE] [kubernetes]:
 this step is recommended for Linux
