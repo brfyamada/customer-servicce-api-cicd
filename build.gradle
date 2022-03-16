@@ -81,6 +81,17 @@ dependencies {
 		exclude group: 'org.slf4j'
 	}
 
+	//[FEIGN CLIENT] [STEP 2] adding Feign Client libs
+	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.1'
+	implementation group: 'io.github.openfeign', name: 'feign-okhttp', version: '11.0'
+	implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.0'
+
+	//[SPRING SLEUTH] [Step 1] adding Sleuth lib
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-sleuth', version: '3.1.1'
+
+
+
 }
 
 //[KAFKA - AVRO] [step 4] gradle-avro-plugin setting and method to generete avro from gradew

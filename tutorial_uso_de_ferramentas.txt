@@ -8,6 +8,8 @@ TAGS:
 [MAPEAMENTO] mepeamento de objetos com MapStruct
 [JENKINS] Configurando Jenkins
 [KAFKA - AVRO] utilizando kafka com avro
+[FEIGN CLIENT] Integração entre API's
+[SPRING SLEUTH] Generating trace log with sleuth
 
 Configurations :
 

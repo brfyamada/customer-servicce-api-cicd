@@ -1,4 +1,4 @@
-// [KAFKA - AVRO] [step 7] Configuration for KafkaConsumer
+//[KAFKA - AVRO] [step 7] Configuration for KafkaConsumer
 
 package br.com.byamada.customerserviceapi.kafka;
 

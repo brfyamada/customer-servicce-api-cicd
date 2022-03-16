@@ -48,5 +48,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDerailsService).passwordEncoder(passwordEncoder);
     }
 
-
 }

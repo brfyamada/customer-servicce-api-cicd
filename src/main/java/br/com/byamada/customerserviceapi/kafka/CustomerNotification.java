@@ -1,4 +1,4 @@
-// [KAFKA - AVRO] [step 10] Example of consuming message
+// [KAFKA - AVRO] [step 10] Example of producing message
 package br.com.byamada.customerserviceapi.kafka;
 
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Component
 public class CustomerNotification {
 
-    private static final int EVERY_FIVE_SECONDS = 5 * 1000;
+    private static final int EVERY_TEM_SECONDS = 10 * 1000;
 
     @Value(value = "${kafka.customer.topic}")
     private String customerTopic;
@@ -27,7 +27,7 @@ public class CustomerNotification {
     private final KafkaTemplate<String, CustomerDTO> customerEventProducerTemplate;
 
     //It's only an example of producer, in this case I'm using a scheduling to call every time
-    @Scheduled(fixedDelay = EVERY_FIVE_SECONDS)
+    //@Scheduled(fixedDelay = EVERY_TEM_SECONDS)
     public void createExampleOfProducer(){
 
         String id =  UUID.randomUUID().toString().replace("-", "");
@@ -43,8 +43,4 @@ public class CustomerNotification {
 
         System.out.println("Customer Postado:  " + cst.getName() );
     }
-
-
-
-
 }
