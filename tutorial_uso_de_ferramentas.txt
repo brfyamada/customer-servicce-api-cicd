@@ -2,13 +2,13 @@ TAGS:
 
 ** Procure pelas tags para aprender a aplicar as ferramentas.
 
-[FLYWAY] utilização de versionamento de scripts banco
-[SLACK] envio de alertas e mensagens para o slack
-[METRICS] metricas com prometheus e grafana
-[MAPEAMENTO] mepeamento de objetos com MapStruct
-[JENKINS] Configurando Jenkins
-[KAFKA - AVRO] utilizando kafka com avro
-[FEIGN CLIENT] Integração entre API's
+[FLYWAY] use of database script versioning
+[SLACK] sending alerts and messages to slack
+[METRICS] metrics with prometheus and grafana
+[MAPEAMENTO] object mapping with MapStruct
+[JENKINS] Jenkins configuring a Pipeline Automation
+[KAFKA - AVRO] using kafka with avro
+[FEIGN CLIENT] Integration between APIs
 [SPRING SLEUTH] Generating trace log with sleuth
 
 Configurations :
