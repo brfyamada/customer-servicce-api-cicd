@@ -27,7 +27,7 @@ public class CustomerNotification {
     private final KafkaTemplate<String, CustomerDTO> customerEventProducerTemplate;
 
     //It's only an example of producer, in this case I'm using a scheduling to call every time
-    //@Scheduled(fixedDelay = EVERY_TEM_SECONDS)
+    @Scheduled(fixedDelay = EVERY_TEM_SECONDS)
     public void createExampleOfProducer(){
 
         String id =  UUID.randomUUID().toString().replace("-", "");
@@ -41,6 +41,6 @@ public class CustomerNotification {
         customerEventProducerTemplate.send(customerTopic, id, cst)
                 .addCallback(result -> log.info("Success posting customer to topic"), ex -> log.error("Error posting customer to topic") );
 
-        System.out.println("Customer Postado:  " + cst.getName() );
+        log.info("Customer Postado:  " + cst.getName() );
     }
 }

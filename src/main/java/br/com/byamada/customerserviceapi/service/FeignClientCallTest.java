@@ -18,7 +18,7 @@ public class FeignClientCallTest {
 
     private final SecurityManagerClient securityManagerClient;
 
-    @Scheduled(fixedDelay = EVERY_TEM_SECONDS)
+    //@Scheduled(fixedDelay = EVERY_TEM_SECONDS)
     public void callSeviceManagerTest() {
         try{
             Optional<String> response = securityManagerClient.adminTest();

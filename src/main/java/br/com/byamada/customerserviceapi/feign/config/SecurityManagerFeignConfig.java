@@ -46,10 +46,10 @@ public class SecurityManagerFeignConfig{
     //[FEIGN CLIENT] [Step 5] Creating a interceptor
     @Bean("securityManagerInterceptor")
     public RequestInterceptor securityManagerInterceptor() {
+        log.info("Making a call to Security Manager: {}");
         return template -> {
             template.header("Content-Type", "application/json");
             template.header("X-App-Token", appToken);
-            log.info("Making a call to Security Manager: " + template.feignTarget().url() + template.path());
         };
     }
 
